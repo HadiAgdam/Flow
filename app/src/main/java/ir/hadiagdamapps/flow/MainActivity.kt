@@ -1,45 +1,39 @@
 package ir.hadiagdamapps.flow
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.LaunchedEffect
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import ir.hadiagdamapps.flow.navigation.AppNavHost
 import ir.hadiagdamapps.flow.ui.theme.Color
 import ir.hadiagdamapps.flow.ui.theme.FlowTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            FlowTheme {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+        }
 
-                Surface {
-                    Column(
-                        Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text("This is Title", style = MaterialTheme.typography.titleLarge)
-                        Button({}) { Text("Click Me !") }
-                        Button({}, enabled = false) { Text("Don't Click Me !") }
-                    }
-                }
+        setContent {
+            val systemUiController = rememberSystemUiController()
+
+            LaunchedEffect(Unit) {
+                systemUiController.setNavigationBarColor(
+                    color = Color.surface,
+                    darkIcons = false
+                )
+                systemUiController.setStatusBarColor(Color.primary, darkIcons = false)
+
+            }
+            FlowTheme {
+                val navController = rememberNavController()
+                AppNavHost(navController = navController)
             }
         }
     }
