@@ -110,7 +110,8 @@ fun BottomControlBar(
 
         Row(
             Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 6.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(

@@ -1,6 +1,7 @@
 package ir.hadiagdamapps.flow.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,7 +14,7 @@ fun AppNavHost(navController: NavHostController) {
     NavHost(navController, startDestination = SongsScreenRoute) {
 
         composable<SongsScreenRoute> {
-            val viewmodel = SongsViewModel()
+            val viewmodel = viewModel<SongsViewModel>()
 
             SongsScreen(viewmodel)
         }
