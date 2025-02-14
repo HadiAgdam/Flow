@@ -94,12 +94,16 @@ object MyNotification {
                 false
             )
 
-            view.setTextViewText(
+            view.setTextViewText( // title
                 R.id.titleText,
-                track.title.toString()
+                track.title
             )
 
-            view.setImageViewUri(R.id.image, Uri.parse(track.albumArtUri))
+            track.albumArtUri?.let {
+                view.setImageViewUri(R.id.image, Uri.parse(it))
+            } ?: {
+                view.setImageViewResource(R.id.image, R.drawable.music_icon)
+            }
 
 
             return NotificationCompat.Builder(context, CHANNEL_ID)
