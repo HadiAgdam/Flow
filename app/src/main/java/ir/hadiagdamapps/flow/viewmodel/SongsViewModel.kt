@@ -3,12 +3,15 @@ package ir.hadiagdamapps.flow.viewmodel
 
 import android.Manifest
 import android.app.Application
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import ir.hadiagdamapps.flow.data.model.Track
 import ir.hadiagdamapps.flow.data.repository.SongRepository
 import ir.hadiagdamapps.flow.media.MusicPlayer
+import ir.hadiagdamapps.flow.service.MusicService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +33,16 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
         _tracks.value = SongRepository.getSongs()
     }
 
-    fun play(track: Track) = MusicPlayer.play(track)
+    fun play(track: Track) {
+        getApplication<Application>().applicationContext.let {
+            val intent = Intent(getApplication<Application>().applicationContext, MusicService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                it.startForegroundService(intent)
+            else
+                it.startService(intent)
+        }
+        MusicPlayer.play(track)
+    }
 
     fun next() = MusicPlayer.next()
 
@@ -40,9 +52,8 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
         MusicPlayer.progressChange(progress)
     }
 
-    fun changePlayingStatus() {
-        if (playing.value) MusicPlayer.pause() else MusicPlayer.resume()
-    }
+    fun changePlayingStatus() = MusicPlayer.playPause()
+
 
     fun checkPermission() {
         getApplication<Application>().applicationContext.let { context ->

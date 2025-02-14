@@ -101,4 +101,8 @@ object MusicPlayer {
     }
 
 
+
+    fun playPause() {
+        if (playing.value) pause() else resume()
+    }
 }
