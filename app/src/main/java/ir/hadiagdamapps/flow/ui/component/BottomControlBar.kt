@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -79,21 +80,25 @@ fun BottomControlBar(
                 IconButton(onClick = previous) {
                     Icon(
                         painterResource(R.drawable.previous_icon),
-                        contentDescription = "previous"
+                        contentDescription = "previous",
+                        modifier=Modifier.size(48.dp).padding(4.dp)
                     )
                 }
 
                 IconButton(onClick = changePlayingStatues) {
                     Icon(
                         painterResource(if (playing) R.drawable.pause_icon else R.drawable.play_icon),
-                        contentDescription = "pause play"
+                        contentDescription = "pause play",
+                        modifier=Modifier.size(48.dp).padding(4.dp)
+
                     )
                 }
 
                 IconButton(onClick = next) {
                     Icon(
                         painterResource(R.drawable.next_icon),
-                        contentDescription = "next"
+                        contentDescription = "next",
+                        modifier=Modifier.size(48.dp).padding(4.dp)
                     )
                 }
             }
