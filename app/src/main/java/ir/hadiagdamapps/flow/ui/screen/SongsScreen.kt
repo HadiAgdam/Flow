@@ -35,6 +35,9 @@ import ir.hadiagdamapps.flow.ui.theme.FlowTheme
 import ir.hadiagdamapps.flow.viewmodel.SongsViewModel
 import android.net.Uri
 import android.provider.Settings
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.DisposableEffect
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -109,12 +112,14 @@ fun SongsScreen(viewModel: SongsViewModel) {
                     .padding(it)
             )
             {
-                Text(
-                    "Songs",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(12.dp)
-                )
+                Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        "Songs",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+
+                }
 
 
                 LazyColumn {

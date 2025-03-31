@@ -3,12 +3,17 @@ package ir.hadiagdamapps.flow.data.source
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
+import ir.hadiagdamapps.flow.data.local.MetaDataDatabase
 import ir.hadiagdamapps.flow.data.model.Track
+import ir.hadiagdamapps.flow.data.repository.MetaDataRepository
 import java.io.File
 
 class SongLoader(private val context: Context) {
 
-    fun loadSongs(): List<Track> {
+    private val repository =
+        MetaDataDatabase.getDatabase(context).musicMetadataDao().let { MetaDataRepository(it) }
+
+    suspend fun loadSongs(): List<Track> {
         val trackList = mutableListOf<Track>()
         val contentResolver = context.contentResolver
 
@@ -18,7 +23,8 @@ class SongLoader(private val context: Context) {
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.DATA,
             MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.DURATION
+            MediaStore.Audio.Media.DURATION,
+            MediaStore.Audio.Media.DATE_ADDED
         )
 
         val cursor = contentResolver.query(
@@ -36,6 +42,7 @@ class SongLoader(private val context: Context) {
             val uriColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
             val albumIdColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
             val durationColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+            val dateAddedColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED)
 
             while (it.moveToNext()) {
                 val id = it.getString(idColumn)
@@ -44,10 +51,22 @@ class SongLoader(private val context: Context) {
                 val uri = it.getString(uriColumn)
                 val albumId = it.getLong(albumIdColumn)
                 val duration = it.getLong(durationColumn)
+                val dateAdded = it.getLong(dateAddedColumn)
 
                 val albumArtUri = getAlbumArtUri(albumId)
 
-                trackList.add(Track(id, title, artist, uri, albumArtUri, duration))
+                trackList.add(
+                    Track(
+                        id,
+                        title,
+                        artist,
+                        uri,
+                        albumArtUri,
+                        duration,
+                        dateAdded,
+                        repository.getPlayCount(id)
+                    )
+                )
             }
         }
 
