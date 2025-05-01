@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import ir.hadiagdamapps.flow.data.model.OrderMode
 import ir.hadiagdamapps.flow.data.model.Track
 import ir.hadiagdamapps.flow.data.repository.SongRepository
 import ir.hadiagdamapps.flow.media.MusicPlayer
@@ -18,6 +19,11 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
+    private  val _orderMode = MutableStateFlow(OrderMode.TITLE)
+    val orderMode = _orderMode.asStateFlow()
+
+    private val _showOrderMenu = MutableStateFlow(false)
+    val showOrderMenu = _showOrderMenu.asStateFlow()
 
     private val _tracks = MutableStateFlow<List<Track>>(listOf())
     val tracks = _tracks.asStateFlow()
@@ -73,6 +79,19 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
     fun onPermissionResult(granted: Boolean) {
         _hasStoragePermission.value = granted
 
+    }
+
+    fun showOrderMenu() {
+        _showOrderMenu.value = true
+    }
+
+    fun dismissOrderMenu() {
+        _showOrderMenu.value = false
+    }
+
+    fun changeOrder(mode: OrderMode) {
+        _showOrderMenu.value = false
+        _orderMode.value = mode
     }
 
 }

@@ -38,10 +38,19 @@ import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import ir.hadiagdamapps.flow.R
+import ir.hadiagdamapps.flow.data.model.OrderMode
+import ir.hadiagdamapps.flow.ui.component.OrderMenu
 
 @Composable
 fun SongsScreen(viewModel: SongsViewModel) {
@@ -58,6 +67,8 @@ fun SongsScreen(viewModel: SongsViewModel) {
     val playingSong = viewModel.playingSong.collectAsState()
     val playing = viewModel.playing.collectAsState()
     val hasPermission = viewModel.hasStoragePermission.collectAsState()
+    val showOrderMenu = viewModel.showOrderMenu.collectAsState()
+    val orderMode = viewModel.orderMode.collectAsState()
 
 
     DisposableEffect(lifecycleOwner) {
@@ -112,18 +123,35 @@ fun SongsScreen(viewModel: SongsViewModel) {
                     .padding(it)
             )
             {
-                Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(
                         "Songs",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                     )
 
+                    IconButton(onClick = viewModel::showOrderMenu) {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_sort_24),
+                            contentDescription = null
+                        )
+                    }
+
                 }
 
 
                 LazyColumn {
-                    items(viewModel.tracks.value) { track: Track ->
+                    items(when (orderMode.value) {
+                        OrderMode.DATE_ADDED -> viewModel.tracks.value.sortedByDescending { track -> track.dateAdded }
+                        OrderMode.TITLE -> viewModel.tracks.value.sortedBy { track -> track.title }
+                        OrderMode.PLAY_COUNT -> viewModel.tracks.value.sortedByDescending { track -> track.playCount }
+                    }
+                    ) { track: Track ->
                         SongItem(
                             albumUri = track.albumArtUri,
                             title = track.title,
@@ -134,6 +162,15 @@ fun SongsScreen(viewModel: SongsViewModel) {
                         Log.e(track.title, track.albumArtUri.toString())
                     }
                 }
+
+                if (showOrderMenu.value)
+                    OrderMenu(
+                        onDismissRequest = viewModel::dismissOrderMenu,
+                        onOrderSelected = viewModel::changeOrder,
+                        orderMode.value
+                    )
+
+
             }
         }
     }
