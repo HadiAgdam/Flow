@@ -47,6 +47,7 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
             else
                 it.startService(intent)
         }
+        _tracks.value.first { it.id == track.id }.playCount++
         MusicPlayer.play(track)
     }
 

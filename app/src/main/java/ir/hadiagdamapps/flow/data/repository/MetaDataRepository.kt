@@ -11,5 +11,8 @@ class MetaDataRepository(private val dao: MetaDataDao) {
         dao.insertOrUpdate(MetaData(songId = songId))
     }
 
+    suspend fun incrementPlayCount(songId: String) {
+        dao.incrementPlayCount(songId, System.currentTimeMillis()) // اوسدون ویرما
+    }
 
 }

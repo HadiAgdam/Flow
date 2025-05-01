@@ -8,5 +8,5 @@ data class Track(
     val albumArtUri: String?,
     val duration: Long,
     val dateAdded: Long,
-    val playCount: Int
+    var playCount: Int
 )

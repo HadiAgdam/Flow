@@ -3,19 +3,24 @@ package ir.hadiagdamapps.flow.media
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import ir.hadiagdamapps.flow.data.local.MetaDataDatabase
 import ir.hadiagdamapps.flow.data.model.Track
+import ir.hadiagdamapps.flow.data.repository.MetaDataRepository
 import ir.hadiagdamapps.flow.data.repository.SongRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 object MusicPlayer {
 
     private const val UPDATE_DELAY = 500L
 
+    private lateinit var metaDataRepository: MetaDataRepository
 
     private val _currentTrack = MutableStateFlow<Track?>(null)
     val currentTrack: StateFlow<Track?> = _currentTrack
@@ -32,7 +37,6 @@ object MusicPlayer {
         override fun run() {
             _progress.value = exoPlayer.currentPosition.toFloat() / exoPlayer.duration.toFloat()
             handler.postDelayed(this, UPDATE_DELAY)
-            Log.e("progress", "${_progress.value * 100}%")
         }
     }
 
@@ -41,6 +45,7 @@ object MusicPlayer {
     private var pointer = -1
 
     fun initialize(context: Context) {
+        metaDataRepository = MetaDataDatabase.getDatabase(context).musicMetadataDao().let { MetaDataRepository(it) }
         SongRepository.getSongs().forEach { queue.add(it) }
         exoPlayer = ExoPlayer.Builder(context).build()
         exoPlayer.addListener(object : Player.Listener {
@@ -68,6 +73,9 @@ object MusicPlayer {
         handler.post(updateProgressRunnable)
         _progress.value = 0f
         pointer = queue.indexOf(track)
+        CoroutineScope(Dispatchers.IO).launch {
+            metaDataRepository.incrementPlayCount(track.id)
+        }
     }
 
     fun resume() {
