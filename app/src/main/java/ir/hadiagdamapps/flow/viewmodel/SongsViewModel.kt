@@ -8,18 +8,31 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import ir.hadiagdamapps.flow.data.local.AppDatabase
+import ir.hadiagdamapps.flow.data.local.Playlist
 import ir.hadiagdamapps.flow.data.model.OrderMode
 import ir.hadiagdamapps.flow.data.model.Track
+import ir.hadiagdamapps.flow.data.repository.PlaylistRepository
 import ir.hadiagdamapps.flow.data.repository.SongRepository
 import ir.hadiagdamapps.flow.media.MusicPlayer
 import ir.hadiagdamapps.flow.service.MusicService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
-    private  val _orderMode = MutableStateFlow(OrderMode.TITLE)
+    private val playlistRepository =
+        AppDatabase.getDatabase(application).playListDao().let { PlaylistRepository(it) }
+
+    val playlists = playlistRepository.playlists
+
+    private val _orderMode = MutableStateFlow(OrderMode.TITLE)
     val orderMode = _orderMode.asStateFlow()
 
     private val _showOrderMenu = MutableStateFlow(false)
@@ -37,11 +50,22 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         _tracks.value = SongRepository.getSongs()
+        CoroutineScope(Dispatchers.IO).launch {
+            playlistRepository.add(
+                Playlist(
+                    playListId = 0,
+                    title = "test title !active",
+                    songs = "",
+                    isSelected = false
+                )
+            )
+        }
     }
 
     fun play(track: Track) {
         getApplication<Application>().applicationContext.let {
-            val intent = Intent(getApplication<Application>().applicationContext, MusicService::class.java)
+            val intent =
+                Intent(getApplication<Application>().applicationContext, MusicService::class.java)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 it.startForegroundService(intent)
             else
@@ -93,6 +117,14 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
     fun changeOrder(mode: OrderMode) {
         _showOrderMenu.value = false
         _orderMode.value = mode
+    }
+
+    fun playlistClick(playlistId: Long) {
+
+    }
+
+    fun playlistEdit(playlistId: Long) {
+
     }
 
 }

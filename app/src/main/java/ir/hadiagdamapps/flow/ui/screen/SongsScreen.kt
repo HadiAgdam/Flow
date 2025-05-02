@@ -51,6 +51,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import ir.hadiagdamapps.flow.R
 import ir.hadiagdamapps.flow.data.model.OrderMode
 import ir.hadiagdamapps.flow.ui.component.OrderMenu
+import ir.hadiagdamapps.flow.ui.component.PlayListItem
+import kotlinx.coroutines.flow.collect
 
 @Composable
 fun SongsScreen(viewModel: SongsViewModel) {
@@ -123,10 +125,37 @@ fun SongsScreen(viewModel: SongsViewModel) {
                     .padding(it)
             )
             {
+
+                Column(Modifier.fillMaxWidth().padding(12.dp)) { // Playlists
+
+                    Text(
+                        text = "Playlists",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    val playlists = viewModel.playlists.collectAsState(listOf())
+
+
+                    LazyColumn {
+                        items(playlists.value) { playlist ->
+                            PlayListItem(
+                                text = playlist.title,
+                                onEditClick = { viewModel.playlistEdit(playlist.playListId) },
+                                onClick = { viewModel.playlistClick(playlist.playListId) },
+                                selected = playlist.isSelected
+                            )
+                        }
+                    }
+
+                }
+
+
+
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
+                        .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(

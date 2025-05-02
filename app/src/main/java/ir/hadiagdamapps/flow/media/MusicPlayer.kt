@@ -6,7 +6,7 @@ import android.os.Looper
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import ir.hadiagdamapps.flow.data.local.MetaDataDatabase
+import ir.hadiagdamapps.flow.data.local.AppDatabase
 import ir.hadiagdamapps.flow.data.model.Track
 import ir.hadiagdamapps.flow.data.repository.MetaDataRepository
 import ir.hadiagdamapps.flow.data.repository.SongRepository
@@ -45,7 +45,7 @@ object MusicPlayer {
     private var pointer = -1
 
     fun initialize(context: Context) {
-        metaDataRepository = MetaDataDatabase.getDatabase(context).musicMetadataDao().let { MetaDataRepository(it) }
+        metaDataRepository = AppDatabase.getDatabase(context).musicMetadataDao().let { MetaDataRepository(it) }
         SongRepository.getSongs().forEach { queue.add(it) }
         exoPlayer = ExoPlayer.Builder(context).build()
         exoPlayer.addListener(object : Player.Listener {

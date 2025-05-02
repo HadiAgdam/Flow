@@ -3,15 +3,14 @@ package ir.hadiagdamapps.flow.data.source
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
-import ir.hadiagdamapps.flow.data.local.MetaDataDatabase
+import ir.hadiagdamapps.flow.data.local.AppDatabase
 import ir.hadiagdamapps.flow.data.model.Track
 import ir.hadiagdamapps.flow.data.repository.MetaDataRepository
-import java.io.File
 
 class SongLoader(private val context: Context) {
 
     private val repository =
-        MetaDataDatabase.getDatabase(context).musicMetadataDao().let { MetaDataRepository(it) }
+        AppDatabase.getDatabase(context).musicMetadataDao().let { MetaDataRepository(it) }
 
     suspend fun loadSongs(): List<Track> {
         val trackList = mutableListOf<Track>()
