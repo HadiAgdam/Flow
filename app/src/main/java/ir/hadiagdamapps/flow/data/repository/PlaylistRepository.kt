@@ -10,4 +10,6 @@ class PlaylistRepository(private val dao: PlaylistDao) {
 
     suspend fun add(playlist: Playlist) = dao.insert(playlist)
 
+    suspend fun delete(playlistId: Long) = dao.deletePlaylist(playlistId)
+
 }
