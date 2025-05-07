@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,8 +18,13 @@ interface PlaylistDao {
     @Query("SELECT * from playlist")
     fun getPlaylists(): Flow<List<Playlist>>
 
-
     @Query("DELETE from playlist where playListId = :playlistId")
     fun deletePlaylist(playlistId: Long)
+
+    @Query("UPDATE playlist SET title = :title where playListId = :playlistId")
+    fun updatePlaylistId(playlistId: Long, title: String)
+
+    @Query("UPDATE playlist SET songs = :songs where playListId = :playlistId")
+    fun updatePlaylistSongs(playlistId: Long, songs: String)
 
 }

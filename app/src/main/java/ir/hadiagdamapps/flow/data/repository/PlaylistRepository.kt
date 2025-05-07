@@ -12,4 +12,8 @@ class PlaylistRepository(private val dao: PlaylistDao) {
 
     suspend fun delete(playlistId: Long) = dao.deletePlaylist(playlistId)
 
+    suspend fun updatePlaylistTitle(playlistId: Long, title: String) = dao.updatePlaylistId(playlistId, title)
+
+    suspend fun updatePlaylistSongs(playlistId: Long, title: String) = dao.updatePlaylistSongs(playlistId, title)
+
 }
