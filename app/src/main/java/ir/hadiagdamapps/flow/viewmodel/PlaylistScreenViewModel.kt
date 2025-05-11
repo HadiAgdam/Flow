@@ -14,9 +14,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PlaylistScreenViewModel(application: Application) : AndroidViewModel(application) {
+class PlaylistScreenViewModel(application: Application, private val playlistId: Long) : AndroidViewModel(application) {
 
-    private val playlistId = 0L // TODO get this from navigation
 
     private val playlistRepository =
         AppDatabase.getDatabase(application).playListDao().let { PlaylistRepository(it) }

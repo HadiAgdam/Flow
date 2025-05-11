@@ -51,6 +51,7 @@ dependencies {
 
     // navigation
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     // media player
     implementation(libs.androidx.media3.exoplayer)

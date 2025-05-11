@@ -8,3 +8,8 @@ object PlayingSongRoute
 
 @Serializable
 object SongsScreenRoute
+
+@Serializable
+data class PlaylistScreenRoute(
+    val playlistId: Long
+)
