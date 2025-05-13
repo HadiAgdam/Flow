@@ -21,7 +21,7 @@ fun AppNavHost(navController: NavHostController, application: Application) {
         composable<SongsScreenRoute> {
             val viewmodel = viewModel<SongsViewModel>()
 
-            SongsScreen(viewmodel)
+            SongsScreen(viewmodel, navController)
         }
 
         composable<PlaylistScreenRoute> {

@@ -31,31 +31,27 @@ import ir.hadiagdamapps.flow.ui.component.BottomControlBar
 import ir.hadiagdamapps.flow.ui.component.PermissionDialog
 import ir.hadiagdamapps.flow.ui.component.SongItem
 import ir.hadiagdamapps.flow.ui.theme.Color
-import ir.hadiagdamapps.flow.ui.theme.FlowTheme
 import ir.hadiagdamapps.flow.viewmodel.SongsViewModel
 import android.net.Uri
 import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavHostController
 import ir.hadiagdamapps.flow.R
 import ir.hadiagdamapps.flow.data.model.OrderMode
 import ir.hadiagdamapps.flow.ui.component.OrderMenu
 import ir.hadiagdamapps.flow.ui.component.PlayListItem
-import kotlinx.coroutines.flow.collect
 
 @Composable
-fun SongsScreen(viewModel: SongsViewModel) {
+fun SongsScreen(viewModel: SongsViewModel, navHostController: NavHostController) {
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -96,6 +92,14 @@ fun SongsScreen(viewModel: SongsViewModel) {
     } else { // content
         Scaffold(bottomBar = {
 
+            LaunchedEffect(Unit) {
+                viewModel.navigatePlaylistScreen.collect { event ->
+                    event?.let {
+                        navHostController.navigate(event)
+                    }
+                }
+            }
+
             AnimatedVisibility(
                 visible = playingSong.value != null,
                 enter = slideInVertically { it },
@@ -126,7 +130,10 @@ fun SongsScreen(viewModel: SongsViewModel) {
             )
             {
 
-                Column(Modifier.fillMaxWidth().padding(12.dp)) { // Playlists
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)) { // Playlists
 
                     Text(
                         text = "Playlists",
@@ -202,16 +209,5 @@ fun SongsScreen(viewModel: SongsViewModel) {
 
             }
         }
-    }
-}
-
-
-@Preview
-@Composable
-private fun SongsScreenPreview() {
-    FlowTheme {
-        val viewmodel: SongsViewModel = viewModel()
-
-        SongsScreen(viewmodel)
     }
 }

@@ -14,6 +14,7 @@ import ir.hadiagdamapps.flow.data.model.Track
 import ir.hadiagdamapps.flow.data.repository.PlaylistRepository
 import ir.hadiagdamapps.flow.data.repository.SongRepository
 import ir.hadiagdamapps.flow.media.MusicPlayer
+import ir.hadiagdamapps.flow.navigation.PlaylistScreenRoute
 import ir.hadiagdamapps.flow.service.MusicService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,6 +42,9 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
     val playingSong: StateFlow<Track?> = MusicPlayer.currentTrack
     val progress: StateFlow<Float> = MusicPlayer.progress
     val playing: StateFlow<Boolean> = MusicPlayer.playing
+
+    private val _navigatePlaylistScreen = MutableStateFlow<PlaylistScreenRoute?>(null)
+    val navigatePlaylistScreen: StateFlow<PlaylistScreenRoute?> = _navigatePlaylistScreen.asStateFlow()
 
     init {
         _tracks.value = SongRepository.getSongs()
