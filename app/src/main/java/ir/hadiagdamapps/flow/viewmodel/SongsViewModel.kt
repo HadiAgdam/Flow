@@ -115,7 +115,7 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun playlistEdit(playlistId: Long) {
-
+        _navigatePlaylistScreen.value = PlaylistScreenRoute(playlistId)
     }
 
 }
