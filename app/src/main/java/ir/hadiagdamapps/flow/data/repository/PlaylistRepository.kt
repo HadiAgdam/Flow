@@ -8,12 +8,14 @@ class PlaylistRepository(private val dao: PlaylistDao) {
 
     val playlists: Flow<List<Playlist>> = dao.getPlaylists()
 
-    suspend fun add(playlist: Playlist) = dao.insert(playlist)
+    suspend fun create(playlist: Playlist) = dao.insert(playlist)
 
-    suspend fun delete(playlistId: Long) = dao.deletePlaylist(playlistId)
+    fun delete(playlistId: Long) = dao.deletePlaylist(playlistId)
 
-    suspend fun updatePlaylistTitle(playlistId: Long, title: String) = dao.updatePlaylistId(playlistId, title)
+    fun updatePlaylistTitle(playlistId: Long, title: String) = dao.updatePlaylistId(playlistId, title)
 
-    suspend fun updatePlaylistSongs(playlistId: Long, title: String) = dao.updatePlaylistSongs(playlistId, title)
+    suspend fun updatePlaylistSongs(playlistId: Long, songs: String) = dao.updatePlaylistSongs(playlistId, songs)
+
+    fun getPlaylist(playlistId: Long) = dao.getPlaylist(playlistId)
 
 }

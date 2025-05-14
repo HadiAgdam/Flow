@@ -27,4 +27,7 @@ interface PlaylistDao {
     @Query("UPDATE playlist SET songs = :songs where playListId = :playlistId")
     fun updatePlaylistSongs(playlistId: Long, songs: String)
 
+    @Query("SELECT * from playlist where playListId = :playlistId LIMIT 1")
+    fun getPlaylist(playlistId: Long): Playlist
+
 }

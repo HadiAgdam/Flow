@@ -30,7 +30,7 @@ fun AppNavHost(navController: NavHostController, application: Application) {
 
             val viewmodel: PlaylistScreenViewModel = viewModel(factory = PlaylistScreenViewModelFactory(application, args.playlistId))
 
-            PlaylistScreen(viewmodel)
+            PlaylistScreen(viewmodel, navController)
 
         }
 

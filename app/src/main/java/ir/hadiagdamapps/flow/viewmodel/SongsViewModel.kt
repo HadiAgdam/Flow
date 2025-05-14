@@ -6,9 +6,12 @@ import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import ir.hadiagdamapps.flow.data.local.AppDatabase
+import ir.hadiagdamapps.flow.data.local.Playlist
 import ir.hadiagdamapps.flow.data.model.OrderMode
 import ir.hadiagdamapps.flow.data.model.Track
 import ir.hadiagdamapps.flow.data.repository.PlaylistRepository
@@ -16,9 +19,12 @@ import ir.hadiagdamapps.flow.data.repository.SongRepository
 import ir.hadiagdamapps.flow.media.MusicPlayer
 import ir.hadiagdamapps.flow.navigation.PlaylistScreenRoute
 import ir.hadiagdamapps.flow.service.MusicService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -45,6 +51,9 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _navigatePlaylistScreen = MutableStateFlow<PlaylistScreenRoute?>(null)
     val navigatePlaylistScreen: StateFlow<PlaylistScreenRoute?> = _navigatePlaylistScreen.asStateFlow()
+
+    private val _showNewPlaylistDialog = MutableStateFlow(false)
+    val showPlaylistDialog: StateFlow<Boolean> = _showNewPlaylistDialog.asStateFlow()
 
     init {
         _tracks.value = SongRepository.getSongs()
@@ -116,6 +125,29 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun playlistEdit(playlistId: Long) {
         _navigatePlaylistScreen.value = PlaylistScreenRoute(playlistId)
+        Handler(Looper.getMainLooper()).postDelayed( {
+            _navigatePlaylistScreen.value = null
+        }, 100)
+    }
+
+    fun createNewPlaylist() {
+        _showNewPlaylistDialog.value = true
+    }
+
+    fun submitNewPlaylistDialog(text: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            playlistRepository.create(
+                Playlist(
+                    playListId = -1,
+                    title = text,
+                )
+            )
+        }
+        _showNewPlaylistDialog.value = false
+    }
+
+    fun denyNewPlaylistDialog() {
+        _showNewPlaylistDialog.value = false
     }
 
 }

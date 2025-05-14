@@ -37,8 +37,12 @@ import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.Lifecycle
@@ -47,6 +51,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import ir.hadiagdamapps.flow.R
 import ir.hadiagdamapps.flow.data.model.OrderMode
+import ir.hadiagdamapps.flow.ui.component.NewPlaylistDialog
 import ir.hadiagdamapps.flow.ui.component.OrderMenu
 import ir.hadiagdamapps.flow.ui.component.PlayListItem
 
@@ -67,6 +72,7 @@ fun SongsScreen(viewModel: SongsViewModel, navHostController: NavHostController)
     val hasPermission = viewModel.hasStoragePermission.collectAsState()
     val showOrderMenu = viewModel.showOrderMenu.collectAsState()
     val orderMode = viewModel.orderMode.collectAsState()
+    val showNewPlaylistDialog = viewModel.showPlaylistDialog.collectAsState()
 
 
     DisposableEffect(lifecycleOwner) {
@@ -133,13 +139,32 @@ fun SongsScreen(viewModel: SongsViewModel, navHostController: NavHostController)
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .padding(12.dp)) { // Playlists
+                        .padding(12.dp),
+                    verticalArrangement = Arrangement.Center
+                ) { // Playlists
 
-                    Text(
-                        text = "Playlists",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(
+                        Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            "Playlists",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                        )
+
+                        IconButton(
+                            onClick = viewModel::createNewPlaylist,
+                            modifier = Modifier.size(48.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null
+                            )
+                        }
+
+                    }
 
                     val playlists = viewModel.playlists.collectAsState(listOf())
 
@@ -204,6 +229,12 @@ fun SongsScreen(viewModel: SongsViewModel, navHostController: NavHostController)
                         onDismissRequest = viewModel::dismissOrderMenu,
                         onOrderSelected = viewModel::changeOrder,
                         orderMode.value
+                    )
+
+                if (showNewPlaylistDialog.value)
+                    NewPlaylistDialog(
+                        submitClick = viewModel::submitNewPlaylistDialog,
+                        deny = viewModel::denyNewPlaylistDialog
                     )
 
 

@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class Playlist(
     @PrimaryKey(autoGenerate = true) val playListId: Long,
     val title: String,
-    val songs: String,
+    val songs: String = "",
     val isSelected: Boolean = false
 )
